@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>RDF 1.2 Triple Terms and Reification explained</title>
+  <title>RDF 1.2 Primer</title>
   <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
   <script src="./common/local-biblio.js" class="remove"></script>
   <script src="./common/fixup.js" class="remove"></script>
@@ -10,18 +10,30 @@
     var respecConfig = {
       localBiblio:          localBibliography,
       specStatus:           "DNOTE",
-      edDraftURI:           "https://franconi.github.io/ttr-note/",
+      edDraftURI:           "https://w3c.github.io/rdf-primer/spec/",
       noRecTrack:           true,
-      shortName:            "rdf12-ttr-note",
+      shortName:            "rdf12-primer",
       copyrightStart:       "2003",
 
+      previousPublishDate:  "2014-06-24",
+      previousMaturity:     "WG-NOTE",
+      prevRecShortname:     "rdf11-primer",
+
       editors:  [
-        { name: "Enrico Franconi", w3cid: "35616"},
-        { name: "xxx", w3cid: "xxx" },
+        { name: "Pierre-Antoine Champin", w3cid: "129656"},
+        { name: "Niklas Lindström", w3cid: "44656" },
       ],
 
-      xref: [ "RDF12-SEMANTICS", "RDF12-CONCEPTS", "RDF12-PRIMER", "RDF12-SCHEMA" ],
-      github: "https://github.com/franconi/ttr-note",
+      formerEditors: [
+        { name: "Guus Schreiber" },
+        { name: "Yves Raimond" },
+        { name: "Frank Manola" },
+        { name: "Eric Miller" },
+        { name: "Brian McBride" }
+      ],
+
+      xref: [ "RDF11-CONCEPTS", "RDF11-SCHEMA" ], // Fixme: change to RDF12-CONCEPTS and RDF12-SCHEMA
+      github: "https://github.com/w3c/rdf-primer/",
       group:           "rdf-star",
       doJsonLd:     true,
       wgPublicList: "public-rdf-star-wg"
