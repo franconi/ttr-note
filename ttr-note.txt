@@ -1,3 +1,5 @@
+https://franconi.github.io/ttr-note/
+
 # Report: Triple Terms and Reification in RDF 1.2
 
 ## Introduction
