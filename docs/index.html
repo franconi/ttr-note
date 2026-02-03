@@ -42,21 +42,40 @@
     <p>This document is part of the RDF 1.2 document suite. It is an informative note on the key concepts of RDF 1.2 Triple terms and Reification. For a normative specification of RDF 1.2 the reader is referred to the [[[RDF12-CONCEPTS]]] document [[RDF12-CONCEPTS]] and the [[[RDF12-SEMANTICS]]] document [[RDF12-SEMANTICS]].</p>
     <section id="related" data-include="./common/related.html"></section>
   </section>
+  
   <section id="section-Introduction">
+  
     <h2>Introduction</h2>
     <p>Let's start with a quote from the [[[GUAR18]]] paper [[GUAR18]]:</p>
+    
     <blockquote class="component component--quote">
       <p>Deciding what to put in the domain of discourse is a fundamental choice for conceptual modeling and knowledge representation. The things that are relevant for our conceptualization of reality-those that we implicitly assume to exist- are typically much more than those our language explicitly refers to. So, our cognitive domain is much bigger than our domain of discourse. For example, when we say that John and Mary are married, our language only refers to them, although we know that there has been a wedding event and that there is an ongoing marriage relationship. It is up to us to introduce these further entities in our domain of discourse, should we need to represent and reason about them. Such process of making hidden entities explicit is called reification. Note that the new entities do not originate from a generic decision to expand the domain, but rather from a transformation of a language construct (typically, a predicate) into a domain element (a "first class citizen").</p>
     </blockquote>
+    
     <p>A sentence like "John and Mary are married" denotes a <em>proposition</em>, expressing the underlying meaning of the sentence as something which can be either true or false. A proposition is therefore a <em>truth-bearer:</em> it is an entity capable of holding a truth-value, distinct from the specific language or words the sentence is made of; in this sense, an RDF triple is also a sentence denoting a proposition.</p>
-    <p>A <em>truth-maker</em> is an actual entity in the world supporting the fact that a proposition is indeed true in some context, such as a wedding event or a marriage relationship, involving John and Mary. The truth-maker entity, merely by its own existence and by its attributes, explains the truth of the proposition in the context. Pippo</p>
+    
+    <p>A <em>truth-maker</em> is an actual entity in the world supporting the fact that a proposition is indeed true in some context, such as a wedding event or a marriage relationship, involving John and Mary. The truth-maker entity, merely by its own existence and by its attributes, explains the truth of the proposition in the context.</p>
+    
     <p>Depending on the context, the same proposition may induce the existence of different kind of entities acting as the truth-makers for the proposition. For example, the proposition "John and Mary are married" may not be true in the actual world, but it maybe true in a belief context, as in the sentence "Paul believes that John and Mary are married", or it may be true at the same time in a different context, e.g., a disbelief context as in the sentence "Sue does not believe that John and Mary are married". In these cases there would be an entity playing the role of the belief of Paul, and another entity playing the role of the disbelief of Sue, both supporting the truth of the proposition in their respective context.
     <br>
     Another example of a proposition inducing different truth-makers is in the context of provenance. For example, a proposition may be true in the context of triples added to an RDF graph, supported by a truth-maker entity denoting the act of adding triples to that graph by an agent at a certain time. In another case, the same proposition may be true in the context of triples deleted to an RDF graph, supported by a truth-maker entity denoting the act of deleting triples to that graph by an agent at a certain time.
     <br>
     Yet another example of a proposition inducing different truth-makers is in the context of repeating event types. The sentence "Bob is interested in the Mona Lisa" may be true in different intervals of time and for different reasons.</p>
-    <p>Basic RDF is excellent at asserting facts (namely, true propositions) as triples in a graph. But often we often want to represent *claims*, *beliefs*, *evidence trails*, *time-bounded validity*, *conflicts*, and *multiple sources*. That requires associating to the proposition denoted by a triple the a "thing that supports the truth ," not just something we assert.</p>
+    
+    <p>Basic RDF is excellent at asserting facts&mdash;namely, true propositions&mdash;as triples in a graph. But, as we have argued above, often we want to represent claims, beliefs, evidence trails, time-bounded validity, conflicts, and multiple sources. That requires associating to the proposition denoted by a triple the truth-maker entity that supports its truth in a context, without the proposition being true in the graph. In RDF 1.2 we call that entity a <em>reifier</em>. As a consequence, we also need to distinguish between asserted triples&mdash;namely triples denoting true propositions since they appear in an RDF graph&mdash;and triple terms&mdash;namely triples denoting abstract propositions for which the truth value is unknown.</p>
+    
+    <p>In the following we will discuss the following novel concepts in RDF 1.2: </p>
+	<ul>
+	<li>Triples and Propositions</li>
+	<li>Facts and Asserted Facts</li>
+	<li>Triple Terms</li>
+	<li>Reification with Reifiers</li>
+	<li>RDF 1.2 Reification Examples</li>
+	<li>Reification and Formal Ontologies</li>
+	</ul>
+    
   </section>
+  
   <section id="section-Acknowledgments" class="appendix">
     <h2>Acknowledgments</h2>
     <section class="informative">
