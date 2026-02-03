@@ -1,0 +1,281 @@
+# Report: Triple Terms and Reification in RDF 1.2
+
+## Introduction
+
+"Deciding what to put in the domain of discourse is a fundamental choice for
+conceptual modeling and knowledge representation. The things that are relevant
+for our conceptualization of reality—those that we implicitly assume to exist—
+are typically much more than those our language explicitly refers to. So, our
+cognitive domain is much bigger than our domain of discourse. For example,
+when we say that John and Mary are married, our language only refers to them,
+although we know that there has been a wedding event and that there is an
+ongoing marriage relationship. It is up to us to introduce these further entities
+in our domain of discourse, should we need to represent and reason about them.
+Such process of making hidden entities explicit is called reification. Note that
+the new entities do not originate from a generic decision to expand the domain,
+but rather from a transformation of a language construct (typically, a predicate)
+into a domain element (a “first class citizen”)."
+[from: N. Guarino, G. Guizzardi, and T. Prince Sales (2018). Reification and Truthmaking Patterns. Proceedings of 37th International Conference on Conceptual Modeling, Springer, pp. 151-165.]
+
+A proposition (a sentence like "John and Mary are married") is a truth-bearer -- namely, something that can be true or false -- while a reifier becomes one of its truth-makers -- namely, the actual entity in the world that grounds the proposition's truth -- like the existence of a wedding event or a marriage relationship, involving John and Mary. A reifier supports the fact that the proposition "John and Mary are married" is indeed true in some context. The reifier entity, merely by its own existence and its attributes, explains the truth of the proposition. 
+
+Basic RDF is excellent at asserting facts (namely, true propositions) as triples in a graph. But often we often want to represent *claims*, *beliefs*, *evidence trails*, *time-bounded validity*, *conflicts*, and *multiple sources*. That requires associating to the proposition denoted by a triple the a “thing that supports the truth ,” not just something we assert.
+
+The deck builds a careful foundation:
+
+1. Start with **triples** and what they mean: they denote **propositions** -- they can be either true or false. 
+2. Distinguish a **fact** (a triple true in an interpretation) from an **assertion** (a triple in a graph, true in any interpretation). 
+3. RDF 1.1 limitation: you can’t conveniently refer to propositions independently of its truth value: a proposition can only be asserted as a triple in a graph.
+4. Introduce **RDF 1.2 triple terms**, which let a proposition appear as a term (not an assertion). 
+5. Show how this enables a clean and explicit form of **reification**, centred on the `rdf:reifies` predicate relating a triple term to a reifier. 
+6. Connect the approach to established ideas in ontology and data modeling (UML/ER/ORM/DLR), showing it isn’t a weird RDF-only hack—it’s the same modeling move expressed in RDF terms. 
+
+---
+
+## 1) Triples, propositions, and facts
+
+### 1.1 Triples denote propositions, not “facts by default”
+
+The deck frames an RDF triple as denoting a **proposition**: the predicate denotes a relation connecting the denotations of the subject and object. 
+This sounds philosophical, but it has a practical payoff: it lets us cleanly say “this triple has a meaning” even if we’re not ready to say “this is true.”
+
+A key emphasis is that a triple’s proposition can be **asserted or not asserted**—meaning, we can talk about its content and still keep the graph neutral about whether it holds in the described context. 
+
+### 1.2 Facts: when the proposition holds in an interpretation
+
+The slides define a **fact** as a proposition that holds in a given interpretation, expressed in RDF semantics terms (membership in the predicate’s extension, `IEXT`). 
+So “fact” here is about *semantic truth* relative to an interpretation, not about what any particular author believes or asserts.
+
+### 1.3 Asserted facts: the commitments of a graph
+
+Then the deck tightens the screw: an **asserted fact** is tied to the graph itself—if the triple is asserted by the RDF graph, then its proposition must hold in **all interpretations that satisfy the graph**. 
+
+This is one of the most important conceptual moves in the deck because it separates:
+
+* **Meaning** (a triple denotes a proposition)
+* **Truth** (it holds in an interpretation)
+* **Assertion/commitment** (the graph requires it to hold)
+
+If you’re doing provenance or belief modeling, this separation is basically everything.
+
+### 1.4 Why this setup matters
+
+The deck is preparing the reader to accept the idea that we can have triples *present in data* whose denoted propositions are not automatically “graph commitments.” That’s the gateway to triple terms and reification.
+
+---
+
+## 2) Triple Terms
+
+### 2.1 The RDF 1.1 limitation (why we need triple terms)
+
+The slides state that RDF 1.1 “can only deal with asserted triples,” and therefore it is “impossible to refer to propositions independently of their truth value.” 
+
+In plain terms: if the only way to represent a statement is to assert it as a triple, then the moment you store the statement you’ve kind of “said it’s true.” That’s awkward if your real intent is “someone claimed it” or “a source suggests it.”
+
+### 2.2 What RDF 1.2 adds: treating a triple as a term
+
+RDF 1.2 introduces the ability to use a triple as an RDF term inside another triple—without asserting it. This term is called a **triple term**. 
+
+This is a structural capability. It’s like saying: “We can now point at the statement itself as a node-like thing, so other triples can talk about it.”
+
+The deck explicitly frames triple terms as enabling a graph to contain facts *about propositions* while remaining noncommittal about whether those propositions are true in that graph’s context. 
+
+### 2.3 Where triple terms can appear, and what they look like
+
+The slides specify a constraint: triple terms are restricted (like literals) to appear **only in object position**. 
+And they show the Turtle 1.2 surface syntax:
+
+`<<( subject predicate object )>>` 
+
+This is practical because it standardizes how you serialize “statement-as-term” in a graph representation.
+
+### 2.4 Semantics intuition: mapping a triple pattern to a proposition denotation
+
+The deck sketches an interpretation where a mapping (`IT`) associates a triple pattern like `<moon, made_of, cheese>` to a proposition-like denotation (e.g., `p1`). 
+
+The exact mechanics matter less than the concept: the triple term has a denotation (a proposition-like entity) even if the graph does not assert it as true. That is the semantic bridge that makes “metadata about statements” behave coherently.
+
+### 2.5 Practical intuition (non-slide commentary)
+
+In practice, triple terms let you model things like:
+
+* “Alice believes **(S P O)**”
+* “This source claims **(S P O)**”
+* “This statement was generated by system X at time T”
+
+…without automatically putting **(S P O)** into the set of asserted truths of the graph.
+
+That’s the move the deck is setting up for reification.
+
+---
+
+## 3) Reification
+
+### 3.1 Reification as the *primary* motivation
+
+The slides position reification as the key use case: triple terms become the foundation for “serious” reification. 
+
+In other words, the point isn’t just that “triples can be nested.” The point is: we want robust, explicit structures that let us attach metadata to “a claim occurrence,” not just to an abstract proposition.
+
+### 3.2 `rdf:reifies` and the notion of a reifier
+
+The deck introduces a new predicate, `rdf:reifies`. The object is a **triple term**, and the subject is a **reifier**. 
+
+Crucially, the slides explain that this supports making assertions about an **occurrence** of the proposition denoted by the triple term. 
+
+That word—**occurrence**—is doing a ton of work. It implies you can have:
+
+* multiple occurrences of the same proposition (e.g., repeated claims, multiple events, multiple sources)
+* metadata on each occurrence
+* a clean separation between “the proposition” and “the reified token of it”
+
+### 3.3 Shortcut notation for readability
+
+The deck shows Turtle 1.2 shortcut patterns for belief/provenance-style annotations while preserving the reifier linkage. 
+
+This matters in practice because reification patterns can get verbose; a standardized shortcut keeps graphs authorable.
+
+### 3.4 Why this reification is “better” conceptually (non-slide commentary)
+
+Many RDF practitioners have historically used ad hoc patterns (“blank node with rdf:subject/predicate/object” style) that are hard to reason over consistently and can blur whether the original statement is asserted.
+
+The `rdf:reifies` approach aims to make the *intent* explicit:
+
+* “Here is the proposition (as a triple term).”
+* “Here is an occurrence token that reifies it.”
+* “Here are facts about that occurrence.”
+
+---
+
+## 4) Examples
+
+The examples section shows what you can do once you’ve got reified occurrences.
+
+### 4.1 Multiple occurrences for “the same” proposition
+
+The slides show multiple reifiers like `_:wlr_1`, `_:wlr_2`, etc., each tied to the same core proposition (e.g., a marriage statement) but with different metadata such as duration. 
+
+This is a great illustration of why “occurrence” matters: you can represent multiple events/claims even if they look identical at the proposition level.
+
+### 4.2 Multiple support: different triples pointing to one shared occurrence token
+
+Another example shows different surface statements sharing a single occurrence node (e.g., `_:w3`), with shared properties like `:starts 1975`. 
+
+This is useful when:
+
+* multiple sources or encodings refer to the same real-world event,
+* you want one place to attach metadata,
+* you don’t want duplicate event nodes.
+
+### 4.3 Statements about statements: belief, refutation, and nesting
+
+The deck includes examples that treat statements as objects of belief/refutation and even nest such constructs. 
+
+This shows the pattern scales from:
+
+* basic provenance (“source says X”)
+  to
+* epistemic layers (“Bob believes Alice said X”)
+  to
+* structured social knowledge (“this statement is refuted by that authority”)
+
+### 4.4 Provenance: generation, sources, invalidation, attribution
+
+Provenance examples attach PROV-ish metadata to reified occurrences: primary sources, generators, generated-at timestamps, seeAlso links. 
+The deck also shows invalidation (marking a reified occurrence as invalid at a time) and then attributing that reification action to an agent. 
+
+What’s important here is the modeling clarity:
+
+* provenance is attached to the *occurrence token*,
+* not necessarily to the proposition’s truth,
+* enabling you to say “this claim was produced/invalidated” without turning truth into a binary property.
+
+---
+
+## 5) Reification in formal ontologies and natural language
+
+This section steps back and says: “This isn’t just engineering. There’s a deep modeling intuition behind it.”
+
+### 5.1 Truth-bearers vs truth-makers
+
+The slides explicitly distinguish:
+
+* a **proposition** as a *truth-bearer*,
+* a **reifier** as a *truth-maker*. 
+
+They describe the reifier as a **relator**: a thing-like entity whose existence and properties make a material relation true (e.g., a wedding that makes “Liz married Richard” true). 
+
+This is a really helpful lens because it explains why it’s natural to “reify” relations:
+
+* we often conceptualize relations as grounded in events/contracts/records,
+* those are entities with attributes,
+* and they’re the natural hook for time, place, witnesses, evidence, etc.
+
+### 5.2 Natural language points to occurrences constantly
+
+The slides note natural language phenomena like referring back to “it” (the wedding), talking about dates, roles like “best man,” etc. 
+
+That maps neatly onto reification: language treats the occurrence as a thing, so our data model benefits from doing the same.
+
+---
+
+## 6) Relation with UML, ER, ORM, Databases, Description Logics
+
+This section is basically: “If you’ve modeled data before, you’ve seen this move.”
+
+### 6.1 UML association class
+
+The deck names UML **association classes** as the analog: turning an association (relation) into a class-like thing so it can have attributes. 
+
+### 6.2 ER weak entity
+
+In ER modeling, a similar pattern appears as a **weak entity** (e.g., a Wedding identified via its participants plus attributes). 
+
+### 6.3 ORM objectification
+
+ORM uses **objectification**: treating a fact type as an object so it can play roles and carry properties. 
+
+### 6.4 n-ary relations and DLR tuple identifiers
+
+The deck also references n-ary relations and Description Logics for relations (DLR), showing relation instances as tuples (`c1`, `c2`) that then support additional facts like best man and location. 
+
+The through-line is: **reification is not an RDF oddity**. It’s the RDF-expression of a very common modeling strategy: “make the relationship instance explicit.”
+
+---
+
+## 7) Relation with Property Graphs
+
+The outline includes a section titled “Relation with Property Graphs,” but in the provided text extraction it appears only as an outline bullet and isn’t expanded into content. 
+
+(Non-slide commentary) Conceptually, the closest parallel is that property graphs let you attach properties to **edges**, which are relationship instances. RDF 1.2 reification similarly introduces an explicit node (the reifier) that you can decorate with properties.
+
+---
+
+## 8) Difference with RDF 1.1 and RDF-star reification
+
+Similarly, the outline includes “Difference with RDF 1.1 and RDF-star reification,” but the extracted content here shows it as a listed section rather than a detailed comparison. 
+
+What is explicitly stated:
+
+* RDF 1.1 effectively only deals in asserted triples for describing a context and cannot refer to propositions independently of truth value. 
+* RDF 1.2 introduces triple terms precisely to enable that separation. 
+* Reification via `rdf:reifies` provides a direct way to speak about occurrences of propositions. 
+
+---
+
+## Conclusion (expanded)
+
+The deck’s “big picture” is a principled modeling story:
+
+* **RDF triples denote propositions**; this gives a stable semantic anchor even before we discuss truth or assertion. 
+* A **fact** is a proposition that holds in an interpretation; an **asserted fact** is a proposition the graph commits to across all satisfying interpretations. 
+* RDF 1.1 struggles when you need to represent claims, uncertainty, provenance, or belief layers, because it cannot easily refer to propositions independently of truth value. 
+* RDF 1.2 fixes this by adding **triple terms**—triples that can appear as terms (in object position) and be serialized in Turtle 1.2 with `<<()>>`. 
+* With triple terms, reification becomes straightforward and explicit using `rdf:reifies`: a **reifier** resource represents an **occurrence** of the proposition, and you can safely attach metadata like provenance, time, belief, or invalidation to that occurrence.  
+* This aligns with well-known modeling patterns from UML, ER, ORM, and relational/DL approaches: “turn the relationship instance into a first-class thing.” 
+
+If you want to take this one step further, I can also:
+
+* rewrite this as a **formal “mini-paper”** (with numbered definitions, “problem → approach → implications”), or
+* produce a **teaching version** (with intuitive diagrams and a running example), or
+* generate a **checklist** for when to use triple terms vs when plain triples are enough.
