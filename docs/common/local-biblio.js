@@ -1,4 +1,14 @@
 var localBibliography = {
+  GUAR18: {
+    id: "GUAR18",
+    title: " Reification and Truthmaking Patterns",
+    authors: ["Nicola Guarino", "Giancarlo Guizzardi", "Tiago Prince Sales"],
+    date: "2018",
+    isbn: "978-3-030-00847-5",
+    href: "https://doi.org/10.1007/978-3-030-00847-5_13",
+    status: "Conference Proceeding",
+    publisher: "Springer, Berlin, Heidelberg"
+  },
   ISO24707: {
     id: "ISO24707",
     title: "Information technology — Common Logic (CL) — A framework for a family of logic-based languages",
