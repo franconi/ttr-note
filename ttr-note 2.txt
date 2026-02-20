@@ -1,0 +1,131 @@
+## Executive summary
+
+These slides explain how **RDF 1.2** makes it possible to talk *about* RDF statements without automatically asserting them, by introducing **triple terms** (triples that can appear as terms, specifically in object position) and a clean **reification** mechanism via `rdf:reifies` that links a “reifier” resource to an **occurrence** of the proposition denoted by a triple term. The deck then shows practical patterns (knowledge-graph event/relationship instances, provenance, beliefs, “statements about statements”) and ties the idea to classic modeling techniques (UML association classes, ER weak entities, ORM objectification, n-ary relations, and DLR-style tuple identifiers).  
+
+---
+
+# Report: Foundations of triple terms and reification
+
+*(based on “Foundations of triple terms and reification — An Introduction to RDF and SPARQL 1.2”, ISWC 2025, 2–3 Nov 2025)* 
+
+## Abstract
+
+The deck frames RDF triples as denoting **propositions**, distinguishes **facts** (propositions true in an interpretation) from **asserted facts** (triples asserted by a graph), and highlights a limitation of RDF 1.1: it can only describe a context by listing true propositions and cannot refer to propositions independently of truth value. RDF 1.2 addresses this by introducing **triple terms** (triples usable as terms without being asserted), and uses them to support “serious” **reification** through `rdf:reifies`, enabling statements about **occurrences** of propositions (e.g., belief, provenance, time). The deck closes by aligning this with established modeling constructs in ontologies and databases.    
+
+## Keywords
+
+RDF 1.2, triple terms, propositions, asserted triples, reification, rdf:reifies, provenance, knowledge graphs, ontology relators.  
+
+---
+
+## 1) Triples, propositions, and facts
+
+### Triples denote propositions (whether asserted or not)
+
+An RDF triple denotes a **proposition**: the predicate denotes a relation connecting the resources denoted by subject and object. The slides emphasize that a triple **may or may not be asserted**, meaning the truth of the denoted proposition can be unknown “in the context of an RDF graph.” 
+
+### Facts vs asserted facts
+
+A proposition that holds in an interpretation is a **fact** (an RDF triple true via `IEXT` in that interpretation). 
+An **asserted fact** in a graph corresponds to a proposition denoted by a triple *in the graph*, such that it holds in **all interpretations satisfying the graph**. 
+
+### Motivation: what RDF 1.1 cannot express cleanly
+
+RDF 1.1 “can only deal with asserted triples,” so it can describe context only by listing true propositions, and it is “impossible to refer to propositions independently of their truth value.” 
+
+---
+
+## 2) Triple Terms
+
+### Definition and purpose in RDF 1.2
+
+RDF 1.2 introduces the ability to use an RDF triple **as an RDF term within another triple**, *without being an asserted triple*. This new RDF term is called a **triple term**, and it allows a graph to include facts about propositions **without committing** to the proposition’s truth value in that graph. 
+
+### Where triple terms can appear + Turtle 1.2 surface syntax
+
+The slides specify that triple terms are restricted (like literals) to appear **only in object position**. In Turtle 1.2 they are written as `<<( subject predicate object )>>`. 
+
+### Formal-semantics intuition (IT mapping)
+
+A sketched interpretation introduces a mapping `IT` associating a triple pattern like `<moon, made_of, cheese>` with a proposition-like denotation (e.g., `p1`), making it possible for the triple term to denote a proposition that may or may not be true in the interpretation. 
+
+---
+
+## 3) Reification
+
+### Core mechanism: rdf:reifies connects an occurrence token to a triple term
+
+The deck presents reification as the main use case: triple terms can be the object of a reifying triple using the predicate **`rdf:reifies`**, which introduces a **reifier** (the subject) that can then be used to assert facts about an **occurrence** of the proposition denoted by the triple term. 
+
+### Shortcut notation for “facts about occurrences”
+
+A Turtle 1.2 shortcut is shown for expressing belief/provenance-style statements concisely while still associating a reifier with the triple term. 
+
+---
+
+## 4) Examples
+
+### Knowledge-graph “relationship instance” modeling
+
+Examples show multiple distinct occurrences for the “same-looking” proposition (e.g., multiple marriages between the same two people with different durations), represented as separate tokens `_:wlr_1`, `_:wlr_2`, etc., each carrying metadata. 
+
+### Multiple support (different surface forms → same occurrence)
+
+The slides show two different triples (different identifiers / phrasing) sharing the same occurrence token `_:w3` with shared metadata (e.g., `:starts 1975`). 
+
+### Statements about statements (belief/refutation/nesting)
+
+Examples include classifying a statement as a belief, attaching who uttered or refuted it, and nesting statements (beliefs about qualified spouse statements), illustrating higher-order claims. 
+
+### Provenance patterns (sources, generation time, invalidation, attribution)
+
+Provenance examples attach PROV metadata (primary source, generator, generated-at time, seeAlso links) to reified occurrences. 
+Another example shows invalidating a reified statement at a time and then attributing that (meta-)reification action to an agent. 
+
+---
+
+## 5) Reification in formal ontologies and natural language
+
+### Truth-bearers vs truth-makers (relators)
+
+The deck contrasts proposition vs reifier: “a proposition is a truth-bearer,” while a reifier is a **truth-maker** for a relation—framed as a **relator**, a “thing-like” entity whose existence/properties make a relational proposition true (e.g., the wedding/marriage itself). 
+
+### Natural-language motivation: we refer back to the event/occurrence
+
+Natural language often treats the occurrence as an entity you can describe (“It was in 1964”, “The former wedding…”, “Its best man…”), aligning with the need for reified occurrence tokens. 
+
+---
+
+## 6) Relation with UML, ER, ORM, Databases, Description Logics
+
+This section positions RDF 1.2-style reification as consistent with long-standing modeling moves that turn relationships into first-class entities so they can carry attributes.
+
+* **UML association class** is explicitly listed as the analog. 
+* **ER weak entity** is listed as a parallel pattern. 
+* **ORM objectification** is listed similarly. 
+* For **n-ary relations** and **DLR**, the deck shows representing relation instances as tuples (`c1`, `c2`) and then attaching more facts like `best_man` and `location` to those instances. 
+
+---
+
+## 7) Relation with Property Graphs
+
+The outline includes a section titled “Relation with Property Graphs,” but in the extracted text we only see it as an outline bullet (no expanded slide content in the parsed text). 
+
+---
+
+## 8) Difference with RDF 1.1 and RDF-star reification
+
+Likewise, the outline includes “Difference with RDF 1.1 and RDF-star reification,” but the parsed text here shows it as an outline bullet rather than a detailed comparison section. 
+The deck *does* make at least one explicit contrast point: RDF 1.1 cannot refer to propositions independently of truth value (it deals only with asserted triples), which RDF 1.2 addresses via triple terms. 
+
+---
+
+## Conclusion
+
+The slides build a clean conceptual ladder:
+
+1. **Triples denote propositions**, which may be true or not in a given interpretation, and may be asserted or not in a given graph. 
+2. RDF 1.2 adds **triple terms** so propositions can be *mentioned* in data without being asserted. 
+3. With `rdf:reifies`, RDF 1.2 supports “serious” **reification**: attaching metadata to **occurrences** (tokens) of propositions—powering real-world needs like provenance, belief, and time—while aligning with established modeling patterns across ontology and database traditions.  
+
+If you want, I can also turn this into a 1–2 page “clean PDF-style” write-up (with tighter prose and fewer code blocks) or a super-short one-page briefing.
