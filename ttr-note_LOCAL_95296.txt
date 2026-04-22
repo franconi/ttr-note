@@ -1,8 +1,23 @@
-https://franconi.github.io/ttr-note/
-
 # Report: Triple Terms and Reification in RDF 1.2
 
 ## Introduction
+
+"Deciding what to put in the domain of discourse is a fundamental choice for
+conceptual modeling and knowledge representation. The things that are relevant
+for our conceptualization of reality—those that we implicitly assume to exist—
+are typically much more than those our language explicitly refers to. So, our
+cognitive domain is much bigger than our domain of discourse. For example,
+when we say that John and Mary are married, our language only refers to them,
+although we know that there has been a wedding event and that there is an
+ongoing marriage relationship. It is up to us to introduce these further entities
+in our domain of discourse, should we need to represent and reason about them.
+Such process of making hidden entities explicit is called reification. Note that
+the new entities do not originate from a generic decision to expand the domain,
+but rather from a transformation of a language construct (typically, a predicate)
+into a domain element (a “first class citizen”)."
+[from: N. Guarino, G. Guizzardi, and T. Prince Sales (2018). Reification and Truthmaking Patterns. Proceedings of 37th International Conference on Conceptual Modeling, Springer, pp. 151-165.]
+
+A proposition (a sentence like "John and Mary are married") is a truth-bearer -- namely, something that can be true or false -- while a reifier becomes one of its truth-makers -- namely, the actual entity in the world that grounds the proposition's truth -- like the existence of a wedding event or a marriage relationship, involving John and Mary. A reifier supports the fact that the proposition "John and Mary are married" is indeed true in some context. The reifier entity, merely by its own existence and its attributes, explains the truth of the proposition. 
 
 Basic RDF is excellent at asserting facts (namely, true propositions) as triples in a graph. But often we often want to represent *claims*, *beliefs*, *evidence trails*, *time-bounded validity*, *conflicts*, and *multiple sources*. That requires associating to the proposition denoted by a triple the a “thing that supports the truth ,” not just something we assert.
 

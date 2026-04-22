@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <title>RDF 1.2 Triple Terms and Reification explained</title>
   <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
   <script src="./common/local-biblio.js" class="remove"></script>
@@ -17,10 +17,9 @@
 
       editors:  [
         { name: "Enrico Franconi", w3cid: "35616"},
-        { name: "xxx", w3cid: "xxx" },
       ],
 
-      xref: [ "RDF12-SEMANTICS", "RDF12-CONCEPTS", "RDF12-PRIMER", "RDF12-SCHEMA" ],
+      xref: [ "RDF12-CONCEPTS", "RDF12-SEMANTICS", "RDF12-INTEROP", "RDF12-PRIMER", "RDF12-SCHEMA" ],
       github: "https://github.com/franconi/ttr-note",
       group:           "rdf-star",
       doJsonLd:     true,
@@ -35,235 +34,70 @@
     code {color: #ff4500;}  /* Old W3C Style */
   </style>
 </head>
-
 <body>
-
-<section id="abstract">
-  <p>This note is designed to explain blah. It introduces the basic
-  concepts of RDF and shows concrete examples of the use of RDF.
-  Secs. 3-5 can be used as a minimalist introduction into the key
-  elements of RDF. Changes between RDF 1.1
-  and RDF 1.2 are summarized in a separate document: [[[RDF12-NEW]]] [[RDF12-NEW]].</p>
-</section>
-
-<section id="sotd">
-  <p>This document is part of the RDF 1.2 document suite. It is an
-  informative note on the key concepts of RDF. For a normative
-  specification of RDF 1.2 the reader is referred to the [[[RDF12-CONCEPTS]]] document
-  [[RDF12-CONCEPTS]].</p>
-
-  <section id="related" data-include="./common/related.html"></section>
-</section>
-
-<section id="section-Introduction">
-  <h2>Introduction</h2>
-
-  <p>xxx</p>
-
-</section>
-
-<section id="YYY">
-  <h2>YYY</h2>
-
-  <p>yyy</p>
+  <section id="abstract">
+    <p>This note aims at explaining the semantics and the best practice use cases of Triple Terms and Reification in RDF 1.2. The normative syntax and semantics of RDF 1.2 Triple Terms and Reification are introduced in separate documents: [[[RDF12-CONCEPTS]]] [[RDF12-CONCEPTS]] and [[[RDF12-SEMANTICS]]] [[RDF12-SEMANTICS]].</p>
+  </section>
+  <section id="sotd">
+    <p>This document is part of the RDF 1.2 document suite. It is an informative note on the key concepts of RDF 1.2 Triple terms and Reification. For a normative specification of RDF 1.2 the reader is referred to the [[[RDF12-CONCEPTS]]] document [[RDF12-CONCEPTS]] and the [[[RDF12-SEMANTICS]]] document [[RDF12-SEMANTICS]].</p>
+    <section id="related" data-include="./common/related.html"></section>
+  </section>
   
-  <section id="section-triple">
-    <h3>Triples</h3>
+  <section id="section-Introduction">
+  
+    <h2>Introduction</h2>
+    
+    <p>Let's start with a quote from the [[[GUAR18]]] paper [[GUAR18]]:</p>
+    
+    <blockquote class="component component--quote">
+      <p>Deciding what to put in the domain of discourse is a fundamental choice for conceptual modeling and knowledge representation. The things that are relevant for our conceptualization of reality&mdash;those that we implicitly assume to exist&mdash;are typically much more than those our language explicitly refers to. So, our cognitive domain is much bigger than our domain of discourse. For example, when we say that John and Mary are married, our language only refers to them, although we know that there has been a wedding event and that there is an ongoing marriage relationship. It is up to us to introduce these further entities in our domain of discourse, should we need to represent and reason about them. Such process of making hidden entities explicit is called reification. Note that the new entities do not originate from a generic decision to expand the domain, but rather from a transformation of a language construct (typically, a predicate) into a domain element (a &#8220;first class citizen&#8221;).</p>
+    </blockquote>
+    
+    <p>A sentence like &#8220;John and Mary are married&#8221; denotes a <em>proposition</em>, expressing the underlying meaning of the sentence as something which can be either true or false. A proposition is therefore a <em>truth-bearer:</em> it is an entity capable of holding a truth-value, distinct from the specific language or words the sentence is made of; in this sense, an RDF triple is also a sentence denoting a proposition.</p>
+    
+    <p>A <em>truth-maker</em> is an actual entity in the world supporting the fact that a proposition is indeed true in some context, such as a wedding event or a marriage relationship, involving John and Mary. The truth-maker entity, merely by its own existence and by its attributes, explains the truth of the proposition in the context.</p>
+    
+    <p>Depending on the context, the same proposition may induce the existence of different kind of entities acting as the truth-makers for the proposition. For example, the proposition &#8220;John and Mary are married&#8221; may not be true in the actual world, but it maybe true in a belief context, as in the sentence &#8220;Paul believes that John and Mary are married&#8221;, or it may be true at the same time in a different context, e.g., a disbelief context as in the sentence &#8220;Sue does not believe that John and Mary are married&#8221;. In these cases there would be an entity playing the role of the belief of Paul, and another entity playing the role of the disbelief of Sue, both supporting the truth of the proposition in their respective context.
+    <br>
+    Another example of a proposition inducing different truth-makers is in the context of provenance. For example, a proposition may be true in the context of triples added to an RDF graph, supported by a truth-maker entity denoting the act of adding triples to that graph by an agent at a certain time. In another case, the same proposition may be true in the context of triples deleted to an RDF graph, supported by a truth-maker entity denoting the act of deleting triples to that graph by an agent at a certain time.
+    <br>
+    Yet another example of a proposition inducing different truth-makers is in the context of repeating event types. The sentence &#8220;Bob is interested in the Mona Lisa&#8221;&mdash;inducing the interest by Bob&mdash;may be true in different intervals of time and for different reasons.</p>
+    
+    <p>Basic RDF is excellent at asserting facts&mdash;namely, true propositions&mdash;as triples in a graph. But, as we have argued above, often we want to represent claims, beliefs, evidence trails, time-bounded validity, conflicts, and multiple sources. That requires associating to the proposition denoted by a triple the truth-maker entity that supports its truth in a context, without the proposition being true in the graph. In RDF 1.2 we call that entity a <em>reifier</em>. As a consequence, we also need to distinguish between asserted triples&mdash;namely triples denoting true propositions since they appear in an RDF graph&mdash;and triple terms&mdash;namely triples denoting abstract propositions for which the truth value is unspecified.</p>
+    
+    <p>In the following we will discuss the following novel concepts in RDF 1.2: </p>
+	<ul>
+	<li>Triples and Propositions</li>
+	<li>Facts and Asserted Facts</li>
+	<li>Triple Terms</li>
+	<li>Reification with Reifiers</li>
+	<li>RDF 1.2 Reification Examples</li>
+	<li>Reification and Formal Ontologies</li>
+	<li>Comparison with Conceptual Modelling, Knowledge Representation, Databases</li>
+	<li>Comparison with RDF 1.1 Reification</li>
+	</ul>
+    
+  </section>
 
-    <p>zzz<p>
+  <section id="section-Introduction">
+  
+    <h2>RDF Triples and Propositions</h2>
+    
+    <p>The denotation of an <dfn data-cite="RDF12-CONCEPTS#dfn-rdf-triple" data-lt="triple">RDF triple</dfn> is a <dfn data-cite="RDF12-SEMANTICS#dfn-set-of-propositions">proposition</dfn>, namely a resource expressing the underlying meaning of the RDF triple as something which can be either true or false. If two RDF triples share the same meaning&mdash;namely they share the denotation of their subjects, predicates, objects&mdash;then they necessarily denote the same proposition. </p>
 
-   <pre>
-      &lt;subject&gt; &lt;predicate&gt; &lt;object&gt;
-    </pre>
-
-    <p>Here are examples of RDF triples (informally expressed in pseudocode):</p>
-
-    <pre class="example" title="Sample triples (informal)" id="example1">
-      &lt;Bob&gt; &lt;is a&gt; &lt;person&gt;.
-      &lt;Bob&gt; &lt;is a friend of&gt; &lt;Alice&gt;.
-      &lt;Bob&gt; &lt;is born on&gt; &lt;the 4th of July 1990&gt;.
-      &lt;Bob&gt; &lt;is interested in&gt; &lt;the Mona Lisa&gt;.
-      &lt;the Mona Lisa&gt; &lt;was created by&gt; &lt;Leonardo da Vinci&gt;.
-      &lt;the video 'La Joconde à Washington'&gt; &lt;is about&gt; &lt;the Mona Lisa&gt;.
-    </pre>
-
-    <p>zzz.</p>
-
-    <p class="note">kkk.</p>
-
-  <p>uuu:</p>
-
-  <table id="table-rdf-schema" class="numbered">
-    <caption>RDF Schema Constructs</caption>
-    <tbody>
-      <tr>
-        <th>Construct</th>
-        <th>Syntactic triple form</th>
-        <th>Description</th>
-      </tr>
-      <tr>
-        <td><a data-cite="RDF12-SCHEMA#ch_classes">Class</a> (a class)</td>
-        <td><strong>C</strong> <code>rdf:type rdfs:Class</code></td>
-        <td><strong>C</strong> (a resource) is an RDF class</td>
-      </tr>
-      <tr>
-        <td><a data-cite="RDF12-SCHEMA#ch_property">Property</a> (a class)</td>
-        <td><strong>P</strong> <code>rdf:type rdf:Property</code></td>
-        <td><strong>P</strong> (a resource) is an RDF property</td>
-      </tr>
-      <tr>
-        <td><a data-cite="RDF12-SCHEMA#ch_type">type</a> (a property)</td>
-        <td><strong>I</strong> <code>rdf:type</code> <strong>C</strong></td>
-        <td><strong>I</strong> (a resource) is an instance of <strong>C</strong> (a class)</td>
-      </tr>
-      <tr>
-        <td><a data-cite="RDF12-SCHEMA#ch_subclassof">subClassOf</a> (a property)</td>
-        <td><strong>C1</strong> <code>rdfs:subClassOf</code> <strong>C2</strong></td>
-        <td><strong>C1</strong> (a class) is a subclass of <strong>C2</strong> (a class)</td>
-      </tr>
-      <tr>
-        <td><a data-cite="RDF12-SCHEMA#ch_subpropertyof">subPropertyOf</a> (a property)</td>
-        <td><strong>P1</strong> <code>rdfs:subPropertyOf</code> <strong>P2</strong></td>
-        <td><strong>P1</strong> (a property) is a sub-property of <strong>P2</strong> (a property)</td>
-     </tr>
-      <tr>
-        <td><a data-cite="RDF12-SCHEMA#ch_domain">domain</a> (a property)</td>
-        <td><strong>P</strong> <code>rdfs:domain</code> <strong>C</strong></td>
-        <td>domain of <strong>P</strong> (a property) is <strong>C</strong> (a class)</td>
-      </tr>
-      <tr>
-        <td><a data-cite="RDF12-SCHEMA#ch_range">range</a> (a property)</td>
-        <td><strong>P</strong> <code>rdfs:range</code> <strong>C</strong></td>
-        <td>range of <strong>P</strong> (a property) is <strong>C</strong> (a class)</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <p class="note">The syntactic triple form (second column) is in a prefix
-  notation which is discussed in more detail in
-  <a href="#section-graph-syntax" class="sectionRef"></a>.
-  The fact that the constructs have two different prefixes
-  (<code>rdf:</code> and <code>rdfs:</code>) is a somewhat annoying
-  historical artefact, which is preserved for backward
-  compatibility.</p>
-
-  <p>Note that, while <code>&lt;is a friend of&gt;</code> is a
-  property typically used as the predicate of a triple (as it was in
-  <a href="#example1">Example&nbsp;1</a>), properties like this are themselves resources that can be
-  described by triples or provide values in the descriptions of other
-  resources. In this example, <code>&lt;is a friend of&gt;</code> is the subject of triples
-  that assign type, domain, and range values to it, and it is the object of
-  a triple that describes something about the <code>&lt;is a good friend of&gt;</code>
-  property.</p>
-
-  <dl>
-    <dt><a href="https://dublincore.org/documents/dcmi-terms/">Dublin Core</a></dt>
-    <dd>The Dublin Core Metadata Initiative maintains a metadata element
-    set for describing a wide range of resources. The vocabulary provides
-    properties such as "creator", "publisher" and "title".</dd>
-
-    <dt><a href="https://schema.org/">schema.org</a>
-    <dd>Schema.org is a vocabulary developed by a group of major search
-    providers. The idea is that webmasters can use these terms to mark-up
-    Web pages, so that search engines understand what the pages are
-    about.</dd>
-
-    <dt><a href="https://www.w3.org/2004/02/skos/">SKOS</a></dt>
-    <dd>SKOS is a vocabulary for publishing classification schemes
-    such as terminologies and thesauri on the Web. SKOS is since 2009 a W3C
-    recommendation and is widely used in the library world. The Library of
-    Congress published its Subject Headings as a <a
-    href="https://id.loc.gov/authorities/subjects.html">SKOS
-    vocabulary</a>.</dd>
-  </dl>
-
-  <p>ccc:</p>
-
-  <ol>
-    <li>Turtle family of RDF languages
-      (<a href="#section-n-triples">N-Triples</a>,
-       <a href="#section-turtle">Turtle</a>,
-       <a href="#section-trig">TriG</a> and
-       <a href="#section-n-quads">N-Quads</a>);</li>
-    <li><a href="#section-json-ld">JSON-LD</a> (JSON-based RDF syntax);</li>
-    <li><a href="#section-rdfa">RDFa</a> (for HTML and XML embedding);</li>
-    <li><a href="#section-rdfxml">RDF/XML</a> (XML syntax for RDF). </li>
-  </ol>
-
-      <p>qqq:</p>
-
-      <pre class="example" title="N-Triples" id="n-triples-example">
-        <span class="linenum">01</span>    &lt;http://example.org/bob#me&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://xmlns.com/foaf/0.1/Person&gt; .
-        <span class="linenum">02</span>    &lt;http://example.org/bob#me&gt; &lt;http://xmlns.com/foaf/0.1/knows&gt; &lt;http://example.org/alice#me&gt; .
-        <span class="linenum">03</span>    &lt;http://example.org/bob#me&gt; &lt;http://schema.org/birthDate&gt; "1990-07-04"^^&lt;http://www.w3.org/2001/XMLSchema#date&gt; .
-        <span class="linenum">04</span>    &lt;http://example.org/bob#me&gt; &lt;http://xmlns.com/foaf/0.1/topic_interest&gt; &lt;http://www.wikidata.org/entity/Q12418&gt; .
-        <span class="linenum">05</span>    &lt;http://www.wikidata.org/entity/Q12418&gt; &lt;http://purl.org/dc/terms/title&gt; "Mona Lisa" .
-        <span class="linenum">06</span>    &lt;http://www.wikidata.org/entity/Q12418&gt; &lt;http://purl.org/dc/terms/creator&gt; &lt;http://dbpedia.org/resource/Leonardo_da_Vinci&gt; .
-        <span class="linenum">07</span>    &lt;http://data.europeana.eu/item/04802/243FA8618938F4117025F17A8B813C5F9AA4D619&gt; &lt;http://purl.org/dc/terms/subject&gt; &lt;http://www.wikidata.org/entity/Q12418&gt; .
-      </pre>
-
-
-<section id="section-conclusion">
-  <h2>More Information</h2>
-
-  <p>This concludes our brief introduction into RDF. Please consult
-  the references to get more detailed information. You might also
-  want to take a look at the
-  <a href="https://www.w3.org/standards/semanticweb/data">W3C Linked Data page</a>.</p>
-
+    <p>If an RDF triple is true in a simple, RDF, or RDFS interpretation, then we say that it is a <dfn data-cite="RDF12-SEMANTICS#dfn-set-of-facts">fact</dfn> in that interpretation. An RDF triple may or may not be asserted, namely it may be unknown whether the proposition it denotes holds true in the context of an RDF graph.</p>
+  
   </section>
 
   <section id="section-Acknowledgments" class="appendix">
-  <h2>Acknowledgments</h2>
-
+    <h2>Acknowledgments</h2>
     <section class="informative">
-      <h3>Acknowledgments for RDF 1.1</h3>
-
-    <p>Antoine Isaac provided many examples, including the
-    different syntactic forms. Pierre-Antoine Champin provided one of
-    the JSON-LD examples. Andrew Wood designed the
-    diagrams. Sandro Hawke wrote the first part of the section on RDF
-    semantics. <p>
-    <p>We are grateful for the comments provided by (in
-    alphabetical order) Gareth Adams, Thomas Baker, Dan Brickley, Pierre-Antoine
-    Champin, Bob DuCharme, Sandro Hawke, Patrick
-    Hayes, Ivan Herman, Kingsley Idehen, Antoine Isaac, Markus Lanthaler, and David Wood. </p>
-
-    <p>The introduction of this document contains a number of sentences from the
-       2004 Primer [[RDF-PRIMER]]. For the rest the RDF 1.1 Primer is a completely
-       new document.</p>
+      <h3>Acknowledgments for contributions</h3>
+      <p>In addition to the editors, the following people have contributed to this document: <span id="gh-contributors"></span></p>
+      <p data-include="common/participants.html"></p>
+      <p class="ednote">Recognize members of the Task Force? Not an easy to find list of contributors.</p>
+    </section>
   </section>
-
-  <section class="informative">
-    <h3>Acknowledgments for RDF 1.2</h3>
-
-    <p>In addition to the editors, the following people have contributed to this specification:
-      <span id="gh-contributors"></span>
-    </p>
-
-    <p data-include="common/participants.html"></p>
-
-    <p class="ednote">Recognize members of the Task Force? Not an easy to find list of contributors.</p>
-  </section>
-</section>
-
-<section  id="section-Changes11" class="appendix">
-  <h2>Changes between RDF 1.0 and RDF 1.1</h2>
-  <ul>
-    <li>Small editorial issues fixed (including three listed
-      <a href="https://www.w3.org/2014/rdf1.1-errata">errata</a>).</li>
-    <li>Link to Japanese translation added.</li>
-  </ul>
-</section>
-
-<section class="appendix informative" id="changes-12">
-  <h2>Changes between RDF 1.1 and RDF 1.2</h2>
-
-  <ul>
-    <li>Added information about directional language-tagged strings (new in RDF 1.2).</li>
-    <li>Added information about triple terms (new in RDF 1.2).</li>
-  </ul>
-</section>
-
-<section id="index"></section>
-</body></html>
+  <section id="index"></section>
+</body>
+</html>
